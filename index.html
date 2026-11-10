@@ -500,7 +500,7 @@ footer a:hover{text-decoration:underline}
   function open(){m.classList.add('open')}
   function close(){m.classList.remove('open')}
   /* Calendly-Link hier eintragen. Leer = Termin-Fenster als Ersatz. */
-  var CALENDLY='';
+  var CALENDLY='https://calendly.com/julius-locadas/julius-komorek';
   document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){if(CALENDLY){location.href=CALENDLY}else{open()}})});
   document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',close)});
   m.addEventListener('click',function(e){if(e.target===m)close()});

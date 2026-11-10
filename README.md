@@ -8,8 +8,6 @@ Statische Website für den Treue-Turbo (Locadas GmbH). Drei Dateien, kein Build.
 
 ## Vor dem Livegang
 
-1. Calendly-Link in `index.html` eintragen: Zeile mit `var CALENDLY=''`.
-2. Sobald Calendly genutzt wird: in `datenschutz.html` den Abschnitt „Gespräch vereinbaren“ um Calendly ergänzen.
 3. Datenschutz einmal rechtlich gegenlesen lassen.
 
 ## Weg A: GitHub Pages mit IONOS-Domain
