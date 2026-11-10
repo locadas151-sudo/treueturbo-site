@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treue-Turbo</title>
+<meta name="description" content="Live-Monitoring deiner Kundenzufriedenheit für Coaches, Berater und Agenturen. In 90 Tagen bleiben deine Kunden doppelt so lange. Oder Geld zurück.">
+<style>
+/* Layout: weiße Seite, große Kacheln, jede Sektion eine andere Form. Akzent ist ein Farbverlauf im Text. */
+:root{
+  color-scheme:light;
+  --bg:#FFFFFF;
+  --tile:#F5F5F7;
+  --ink:#1D1D1F;
+  --muted:#6E6E73;
+  --line:#D2D2D7;
+  --blue:#0071E3;
+  --grad:linear-gradient(90deg,#0A84FF 0%,#7D5CFF 45%,#FF4D8D 100%);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI Variable Display","Segoe UI",Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.47;letter-spacing:-.011em}
+a{color:inherit}
+button{font-family:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(22px,env(safe-area-inset-left,0px));padding-right:max(22px,env(safe-area-inset-right,0px))}
+h1,h2{margin:0;font-weight:600;letter-spacing:-.035em;line-height:1.05;text-wrap:balance}
+h1{font-size:clamp(46px,7.2vw,96px)}
+h2{font-size:clamp(34px,5vw,64px)}
+p{margin:0}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:clamp(20px,2.2vw,28px);color:var(--muted);font-weight:400;letter-spacing:-.02em;line-height:1.25}
+.eyebrow{font-size:17px;font-weight:600;color:var(--muted)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 26px;border-radius:999px;border:0;cursor:pointer;background:var(--blue);color:#fff;font-size:17px;font-weight:500;white-space:nowrap;transition:background .15s}
+.btn:hover{background:#0077ED}
+.btn.sm{height:34px;padding:0 15px;font-size:14px}
+.link{font-size:17px;color:var(--blue);text-decoration:none;background:none;border:0;cursor:pointer;padding:0}
+.link:after{content:" ›"}
+.link:hover{text-decoration:underline}
+.btn:focus-visible,.link:focus-visible,.x:focus-visible,input:focus-visible{outline:3px solid rgba(0,113,227,.45);outline-offset:3px}
+
+/* Kopfzeile */
+nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.78);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.08)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:52px}
+.brand{font-size:19px;font-weight:600;letter-spacing:-.03em;text-decoration:none}
+
+/* Hero */
+.hero{text-align:center;padding-block:96px 80px}
+.hero h1{max-width:10.5em;margin:14px auto 22px}
+.hero .sub{max-width:22em;margin:0 auto 34px}
+.acts{display:flex;gap:26px;justify-content:center;align-items:center;flex-wrap:wrap}
+
+/* Vorher Nachher als zwei Kacheln */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-bottom:110px}
+.tile{background:var(--tile);border-radius:28px;padding:44px;min-width:0}
+.duo .tile{min-height:400px;display:flex;flex-direction:column;justify-content:space-between}
+.duo .big{font-size:clamp(96px,14vw,180px);font-weight:600;letter-spacing:-.06em;line-height:.9;color:#B0B0B6}
+.duo .now .big{color:var(--ink)}
+.duo h3{font-size:28px;letter-spacing:-.025em;margin:0 0 8px;font-weight:600}
+.duo p{font-size:19px;color:var(--muted);max-width:19em}
+.duo .now{background:#fff;box-shadow:0 0 0 1px var(--line),0 30px 60px -30px rgba(125,92,255,.45)}
+
+/* Aussage */
+.say{padding-block:40px 130px;text-align:center}
+.say h2{max-width:13em;margin:0 auto 26px}
+.say h2 span{color:#A1A1A6}
+.say .sub{max-width:26em;margin:0 auto}
+
+/* Rechner */
+.calcwrap{padding-bottom:110px}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;padding:56px}
+.calc h2{font-size:clamp(30px,3.6vw,44px);margin-bottom:34px}
+.field{margin-bottom:28px}
+.field:last-child{margin-bottom:0}
+.field label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:17px;margin-bottom:12px}
+.field output{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+input[type=range]{-webkit-appearance:none;appearance:none;display:block;width:100%;height:4px;border-radius:99px;background:linear-gradient(90deg,var(--ink) var(--p,50%),var(--line) var(--p,50%));margin:10px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25),0 0 0 .5px rgba(0,0,0,.12);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:0;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer}
+.sum{text-align:center}
+.sum .eyebrow{display:block;margin-bottom:6px}
+.sum b{display:block;font-size:clamp(46px,6.4vw,84px);font-weight:600;letter-spacing:-.045em;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sum p{color:var(--muted);font-size:17px;margin:8px 0 26px}
+
+/* Garantie */
+.guar{text-align:center;padding-block:20px 130px}
+.guar .num{font-size:clamp(110px,20vw,260px);font-weight:600;letter-spacing:-.06em;line-height:1;display:inline-block;padding:0 .08em}
+.guar h2{margin:14px auto 18px;max-width:12em}
+.guar .sub{max-width:24em;margin:0 auto}
+
+/* Abschluss */
+.endwrap{padding-bottom:60px}
+.end{text-align:center;padding:84px 44px}
+.end h2{max-width:12em;margin:0 auto 16px}
+.end .sub{margin-bottom:30px}
+.me{display:inline-flex;align-items:center;gap:14px;margin-top:44px;font-size:15px;color:var(--muted);text-align:left}
+.me .pic{width:52px;height:52px;border-radius:50%;background:#E8E8ED;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px}
+.me b{color:var(--ink);font-weight:600}
+footer{border-top:1px solid var(--line);padding-block:20px 40px;font-size:12px;color:var(--muted)}
+footer .wrap{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between}
+footer a{margin-left:18px;text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* Termin-Fenster */
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.modal.open{display:flex}
+.dlg{background:#fff;border-radius:24px;width:100%;max-width:440px;padding:38px;position:relative;box-shadow:0 30px 80px -20px rgba(0,0,0,.35)}
+.dlg h3{font-size:28px;letter-spacing:-.03em;margin:0 0 6px;font-weight:600}
+.dlg form>p,.done p{color:var(--muted);font-size:17px;margin-bottom:22px}
+.dlg form>p.mysum{font-size:14px;color:var(--ink);background:var(--tile);border-radius:12px;padding:12px 14px;margin:-8px 0 20px}
+.x{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;border:0;background:var(--tile);cursor:pointer;font-size:18px;color:var(--muted);line-height:1}
+.dlg label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px}
+.dlg input{width:100%;height:50px;border-radius:12px;border:1px solid var(--line);padding:0 14px;font-size:17px;font-family:inherit;margin-bottom:14px;background:#fff;color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dlg .btn{width:100%;margin-top:6px}
+.fine{font-size:13px;color:var(--muted);margin-top:14px;text-align:center}
+.done{display:none;text-align:center}
+.contact p{color:var(--muted);font-size:17px;margin:0 0 16px}
+.contact .btn{display:flex;align-items:center;justify-content:center;width:100%;margin-top:10px;text-decoration:none}
+.contact .btn.ghost{background:var(--tile);color:var(--ink)}
+.contact .btn.ghost:hover{background:#E8E8ED}
+
+@media (max-width:820px){
+  .duo{grid-template-columns:1fr}
+  .duo .tile{min-height:300px}
+  .calc{grid-template-columns:1fr;gap:44px;padding:36px 26px}
+  .sum{text-align:left}
+}
+@media (max-width:600px){
+  .hero{padding-block:60px 56px}
+  .tile{padding:30px 26px;border-radius:22px}
+  .duo{padding-bottom:80px}
+  .say{padding-block:20px 90px}
+  .calcwrap{padding-bottom:80px}
+  .guar{padding-bottom:90px}
+  .end{padding:56px 24px}
+  .two{grid-template-columns:1fr}
+  .dlg{padding:28px}
+  footer a{margin:0 18px 0 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Figuren */
+.fig{width:min(100%,340px);height:auto;display:block;margin-bottom:28px}
+.duo .now .fig{filter:drop-shadow(0 18px 30px rgba(125,92,255,.35))}
+.hero{position:relative;overflow:hidden;padding-bottom:260px}
+.hero .wrap{position:relative}
+.orb{position:absolute;left:50%;top:calc(100% - 190px);width:1500px;height:1500px;transform:translateX(-50%);border-radius:50%;background:conic-gradient(from 270deg,#FF4D8D,#7D5CFF,#0A84FF,#5CE1E6,#7D5CFF,#FF4D8D);-webkit-mask:radial-gradient(closest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(closest-side,transparent calc(100% - 5px),#000 calc(100% - 4px))}
+.hero:after{content:"";position:absolute;left:50%;top:calc(100% - 230px);width:1100px;max-width:120vw;height:260px;transform:translateX(-50%);background:radial-gradient(50% 60% at 50% 100%,rgba(125,92,255,.30),rgba(125,92,255,0) 70%);filter:blur(10px);pointer-events:none}
+.guar{padding-bottom:110px}
+@media (max-width:600px){.hero{padding-bottom:170px}.orb{width:900px;height:900px;top:calc(100% - 120px)}}
+
+/* Zwei Nachrichten */
+.duo-h{grid-column:1/-1;text-align:center;margin-bottom:28px}
+.duo .tile{min-height:0;gap:26px;justify-content:flex-start}
+.msg{background:#fff;border-radius:22px;padding:20px 22px;box-shadow:0 1px 2px rgba(0,0,0,.06),0 18px 40px -18px rgba(0,0,0,.22)}
+.duo .now .msg{background:var(--tile);box-shadow:none}
+.msg-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.msg-top b{display:block;font-size:16px;font-weight:600;line-height:1.2}
+.msg-top small{font-size:13px;color:var(--muted)}
+.av{width:40px;height:40px;border-radius:50%;background:#C7C7CC;color:#fff;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+.av.g{background:var(--grad)}
+.duo .msg p{font-size:clamp(19px,2vw,23px);line-height:1.35;color:var(--ink);max-width:none;letter-spacing:-.015em}
+.punch{font-size:clamp(28px,3.4vw,42px)!important;font-weight:600;letter-spacing:-.035em;line-height:1.05;color:#A1A1A6!important;max-width:none!important;margin-top:auto}
+
+/* Chat */
+.chat{background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.06),0 20px 44px -20px rgba(0,0,0,.25)}
+.duo .now .chat{box-shadow:0 0 0 1px var(--line)}
+.chat-top{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #EDEDF0}
+.chat-top b{display:block;font-size:16px;font-weight:600;line-height:1.2}
+.chat-top small{font-size:13px;color:var(--muted)}
+.chat .av{width:40px;height:40px;flex:none;background:none;border-radius:50%}
+.bubble{margin:18px 18px 20px;padding:12px 16px 10px;background:#E9E9EB;border-radius:20px 20px 20px 6px;font-size:clamp(17px,1.7vw,20px);line-height:1.35;color:var(--ink);max-width:26em}
+.bubble time{display:block;text-align:right;font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Aufgeraeumt und kompakter */
+.orb,.hero:after{display:none}
+.hero{padding-block:84px 72px}
+.brand{display:flex;align-items:center;gap:9px}
+.brand svg{width:36px;height:22px;flex:none}
+.duo{padding-bottom:90px}
+.say{padding-block:20px 100px}
+@media (max-width:600px){
+  .hero{padding-block:40px 44px}
+  h1{font-size:40px}
+  .hero h1{margin:10px auto 14px}
+  .hero .sub{font-size:19px;margin-bottom:24px}
+  .acts{gap:16px}
+  .duo{gap:14px;padding-bottom:60px}
+  .duo-h{font-size:30px;margin-bottom:8px}
+  .duo .tile{padding:20px;gap:14px}
+  .chat-top{padding:10px 14px}
+  .bubble{margin:12px 12px 14px;font-size:16px}
+  .punch{font-size:24px!important}
+  .say{padding-block:0 64px}
+  .say h2,.guar h2,.end h2{font-size:30px}
+  .calcwrap{padding-bottom:60px}
+  .calc{padding:28px 20px;gap:32px}
+  .guar{padding-block:0 64px}
+  .end{padding:44px 20px}
+  .me{margin-top:28px}
+}
+
+/* Julius */
+.host{display:inline-flex;align-items:center;gap:12px;margin-top:30px;font-size:15px;color:var(--muted)}
+.host img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.end{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:end;text-align:left;padding:0 0 0 64px;overflow:hidden}
+.end-text{padding-block:84px;align-self:center}
+.end h2{margin:0 0 16px;max-width:9em}
+.end .sub{margin-bottom:30px}
+.end-pic{display:block;width:100%;max-width:440px;height:auto;justify-self:end;align-self:end}
+.dlg-av{width:64px;height:64px;border-radius:50%;object-fit:cover;display:block;margin-bottom:16px}
+@media (max-width:820px){
+  .end{grid-template-columns:1fr;padding:0;text-align:center}
+  .end-text{padding:48px 22px 8px}
+  .end h2{margin-inline:auto}
+  .end-pic{max-width:280px;justify-self:center}
+}
+@media (max-width:600px){.host{margin-top:20px}.end-text{padding-top:40px}.end h2{font-size:30px}}
+
+/* Abschluss ohne Foto */
+.end{display:block;text-align:center;padding:84px 44px}
+.end-text{padding:0}
+.end h2{margin:0 auto 16px;max-width:12em}
+@media (max-width:600px){.end{padding:44px 20px}}
+
+/* Logo: alle zehn Sekunden werden die Ringe zu Reifen, der Turbo zündet */
+.logo{overflow:visible}
+.logo .w1,.logo .w2,.logo .car{transform-box:fill-box;transform-origin:center}
+.logo .car{transform-box:view-box;transform-origin:10px 17px;animation:car 10s infinite}
+.logo .w1{animation:w1 10s infinite}
+.logo .w2{animation:w2 10s infinite}
+.logo .body{opacity:0;animation:body 10s infinite}
+.logo .flame{opacity:0;animation:flame 10s infinite}
+.logo .w1,.logo .w2{fill:#fff;fill-opacity:0}
+@keyframes w1{0%,80%,100%{transform:none;fill-opacity:0}85%,95%{transform:translate(-2.5px,5.5px) scale(.42);fill-opacity:1}}
+@keyframes w2{0%,80%,100%{transform:none;fill-opacity:0}85%,95%{transform:translate(2.5px,5.5px) scale(.42);fill-opacity:1}}
+@keyframes body{0%,81%,99%,100%{opacity:0}85%,95%{opacity:1}}
+@keyframes flame{0%,86%,93.5%,100%{opacity:0}87%{opacity:1}88%{opacity:.4}89%,92.500%{opacity:1}}
+@keyframes car{0%,86.500%,95%,100%{transform:none}88%{transform:translateX(-1.5px)}90.500%{transform:translateX(9px) rotate(-9deg)}93%{transform:translateX(4px) rotate(-3deg)}}
+@media (prefers-reduced-motion:reduce){.logo *{animation:none!important}}
+
+/* Vergleich kompakt */
+.duo .tile{padding:28px;gap:16px}
+.row{display:flex;gap:10px;align-items:flex-end}
+.row .av{width:32px;height:32px;flex:none}
+.row .bubble{margin:0;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);font-size:clamp(16px,1.5vw,18px);max-width:none}
+.duo .now .row .bubble{background:#F0EEFF;box-shadow:none}
+.punch{font-size:clamp(20px,2.2vw,26px)!important;margin-top:0}
+.say{padding-block:10px 110px}
+.say h2{font-size:clamp(28px,3.8vw,48px);line-height:1.12;max-width:19em;margin:0 auto}
+@media (max-width:600px){
+  .duo .tile{padding:18px;gap:12px}
+  .row .bubble{font-size:15.5px}
+  .punch{font-size:19px!important}
+  .say{padding-block:0 60px}
+  .say h2{font-size:25px}
+}
+
+/* Hero füllt den ersten Bildschirm, die nächste Frage schaut herein */
+.hero{min-height:calc(100svh - 52px - 150px);display:flex;flex-direction:column;justify-content:center;padding-block:40px 64px;position:relative}
+.hero .wrap{width:100%}
+.hint{position:absolute;left:50%;bottom:16px;width:40px;height:40px;margin-left:-20px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);animation:nudge 2.4s ease-in-out infinite}
+.hint svg{width:24px;height:24px}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* Vergleich als eigenes Band */
+.band{background:var(--tile);padding-block:48px 80px}
+.band .duo{padding-bottom:0}
+.band .tile{background:#fff}
+.band .row .bubble{background:var(--tile);box-shadow:none}
+.band .now .row .bubble{background:#F0EEFF}
+.say{padding-block:100px 110px}
+
+/* Cookie-Hinweis */
+[hidden]{display:none!important}
+.cookie{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:40;width:min(400px,calc(100vw - 32px));background:rgba(29,29,31,.94);color:#fff;border-radius:22px;padding:22px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 20px 60px -20px rgba(0,0,0,.5)}
+.ck-eyebrow{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:8px}
+.cookie h3{font-size:22px;letter-spacing:-.025em;margin:0 0 8px;font-weight:600}
+.cookie p{font-size:14px;line-height:1.4;color:rgba(255,255,255,.75)}
+.ck-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 12px}
+.ck-b{height:44px;border-radius:999px;border:0;background:#fff;color:var(--ink);font-size:15px;font-weight:500;cursor:pointer;font-family:inherit}
+.ck-b:hover{background:#E8E8ED}
+.ck-b:focus-visible{outline:3px solid rgba(10,132,255,.7);outline-offset:2px}
+.ck-links a{font-size:12px;color:rgba(255,255,255,.6);margin-right:16px}
+@media (max-width:600px){
+  .hero{min-height:calc(100svh - 52px - 120px);padding-block:28px 60px}
+  .band{padding-block:32px 48px}
+  .say{padding-block:60px 60px}
+  .cookie{padding:18px}
+  .cookie h3{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){.hint{animation:none}}
+
+/* Hero: Hintergrund und Höhe */
+.hero{overflow:hidden;min-height:calc(100svh - 52px - 215px);background:radial-gradient(60% 70% at 100% 0%,rgba(125,92,255,.10),transparent 60%),radial-gradient(50% 60% at 0% 100%,rgba(10,132,255,.09),transparent 60%),#fff}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;opacity:.28;pointer-events:none}
+.band{padding-top:40px}
+/* Cookie */
+.ck-b{display:block;width:100%;height:48px;margin:16px 0 4px;background:var(--blue);color:#fff;font-weight:600;font-size:16px}
+.ck-b:hover{background:#0077ED}
+.ck-n{display:block;width:100%;background:none;border:0;color:rgba(255,255,255,.55);font-size:13px;padding:8px 0 10px;cursor:pointer;font-family:inherit}
+.ck-n:hover{color:#fff}
+.ck-n:focus-visible{outline:3px solid rgba(10,132,255,.7);outline-offset:2px;border-radius:8px}
+@media (max-width:600px){
+  .hero{min-height:0;padding-block:44px 64px}
+  .hero-bg{opacity:.2}
+}
+
+/* Treue-Turbo-Kachel mit Farbrand */
+.band .now{border:2px solid transparent;background:linear-gradient(#fff,#fff) padding-box,var(--grad) border-box;box-shadow:0 24px 50px -28px rgba(125,92,255,.7)}
+.say h2 span.grad{color:transparent}
+.micro{margin-top:18px;font-size:15px;color:var(--muted)}
+
+/* Beweis */
+.stat{padding-block:100px 20px}
+.stat .wrap{display:grid;grid-template-columns:auto 1fr;gap:56px;align-items:center}
+.stat-n{font-size:clamp(96px,15vw,200px);font-weight:600;letter-spacing:-.06em;line-height:.9;white-space:nowrap}
+.stat-t{font-size:clamp(22px,2.6vw,32px);font-weight:600;letter-spacing:-.025em;line-height:1.2;max-width:20em}
+.stat-t span{color:#A1A1A6}
+.stat-s{font-size:13px;color:var(--muted);margin-top:16px}
+.say .sub{max-width:24em;margin:22px auto 0}
+@media (max-width:820px){.stat .wrap{grid-template-columns:1fr;gap:18px}}
+@media (max-width:600px){.stat{padding-block:60px 0}.stat-n{font-size:88px}.stat-t{font-size:21px}}
+
+/* Platz 1 gegen Platz 7 */
+.stat .wrap{display:block}
+.gap{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.gap b{display:block;font-size:clamp(64px,10vw,140px);font-weight:600;letter-spacing:-.055em;line-height:.95;white-space:nowrap}
+.gap p{font-size:clamp(19px,2vw,24px);font-weight:600;letter-spacing:-.02em;line-height:1.25;margin-top:14px;max-width:15em}
+.gap .dim b,.gap .dim p{color:#A1A1A6}
+.stat-s{margin-top:28px}
+@media (max-width:600px){.gap{gap:14px}.gap b{font-size:52px}.gap p{font-size:16px}}
+
+.gap{grid-template-columns:auto 1fr;gap:clamp(28px,6vw,90px);align-items:end}
+.gap b{font-size:clamp(52px,8.6vw,118px);padding-right:.04em}
+.gap p{margin-top:8px;max-width:none}
+@media (max-width:600px){.gap{grid-template-columns:1fr;gap:22px}.gap b{font-size:60px}.gap p{font-size:18px}}
+
+/* Hebel */
+.stat{text-align:center}
+.lever{font-size:clamp(32px,5vw,64px);font-weight:600;letter-spacing:-.04em;line-height:1.05;max-width:15em;margin:0 auto;text-wrap:balance}
+.lever2{font-size:clamp(22px,2.6vw,32px);font-weight:600;letter-spacing:-.025em;color:#A1A1A6;margin-top:18px}
+.stat-s{margin-top:22px}
+@media (max-width:600px){.lever{font-size:30px}.lever2{font-size:20px}}
+
+/* Zwei Zahlen unter dem Claim */
+.say{padding-block:100px 100px}
+.two-n{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:760px;margin:56px auto 0}
+.two-n div{background:var(--tile);border-radius:24px;padding:30px 20px}
+.two-n b{display:block;font-size:clamp(40px,6vw,72px);font-weight:600;letter-spacing:-.045em;line-height:1;white-space:nowrap}
+.two-n span{display:block;font-size:17px;color:var(--muted);margin-top:10px}
+.say .stat-s{margin-top:16px;text-align:center}
+@media (max-width:600px){.say{padding-block:60px 60px}.two-n{gap:10px;margin-top:32px}.two-n div{padding:20px 10px}.two-n b{font-size:34px}.two-n span{font-size:14px}}
+
+.one-n{margin:44px auto 0;text-align:center}
+.one-n b{display:block;font-size:clamp(64px,11vw,150px);font-weight:600;letter-spacing:-.055em;line-height:1;padding:0 .06em}
+.one-n span{display:block;font-size:clamp(18px,2vw,24px);color:var(--muted);margin-top:8px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><svg class="logo" viewBox="0 0 36 22" aria-hidden="true"><defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0A84FF"/><stop offset=".5" stop-color="#7D5CFF"/><stop offset="1" stop-color="#FF4D8D"/></linearGradient></defs><g class="car"><path class="flame" d="M2.500 13.500L-7 12l3.500 2.200L-9.500 15.500l12 1z" fill="#FF9F0A"/><path class="body" d="M1.500 16.500L2.600 12.600Q3.200 11.400 7.500 10.900L12.800 7.300Q14.300 6.300 17.500 6.300L21.500 6.300Q25 6.300 28.200 10.300L32.800 11.600Q34.600 12.300 34.600 14.800L34.600 16.500Z" fill="url(#lg2)"/><circle class="w1" cx="11.500" cy="11" r="8.200" fill="none" stroke="url(#lg2)" stroke-width="3.400"/><circle class="w2" cx="24.500" cy="11" r="8.200" fill="none" stroke="url(#lg2)" stroke-width="3.400"/></g></svg><span>Treue-Turbo</span></a>
+    <button class="btn sm" data-open>Gespräch vereinbaren</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <svg class="hero-bg" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0A84FF"/><stop offset=".5" stop-color="#7D5CFF"/><stop offset="1" stop-color="#FF4D8D"/></linearGradient></defs><circle cx="1180" cy="330" r="330" fill="none" stroke="url(#hg)" stroke-width="2"/><circle cx="1560" cy="330" r="330" fill="none" stroke="url(#hg)" stroke-width="2"/><circle cx="-120" cy="640" r="260" fill="none" stroke="url(#hg)" stroke-width="2"/><circle cx="180" cy="640" r="260" fill="none" stroke="url(#hg)" stroke-width="2"/></svg>
+  <div class="orb" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="eyebrow">Für Coaches, Berater und Agenturen</p>
+    <h1>Deine Kunden bleiben <span class="grad">doppelt so lange.</span></h1>
+    <p class="sub">In 90 Tagen. Oder du bekommst dein Geld zurück.</p>
+    <div class="acts">
+      <button class="btn" data-open>Gespräch vereinbaren</button>
+      <a class="link" href="#rechner">Selbst ausrechnen</a>
+    </div>
+  </div>
+  <a class="hint" href="#vergleich" aria-label="Weiter nach unten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+</header>
+
+<section class="band" id="vergleich">
+<div class="wrap duo">
+  <h2 class="duo-h">Welche Nachricht bekommst du lieber?</h2>
+  <div class="tile">
+    <span class="eyebrow">Heute · dein Kunde schreibt</span>
+    <div class="row"><svg class="av" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#B4B4BB"/><circle cx="20" cy="15.5" r="6.5" fill="#fff" opacity=".92"/><path d="M7.5 34c1.6-7 6.6-10.5 12.5-10.5S30.9 27 32.5 34A20 20 0 0 1 7.5 34z" fill="#fff" opacity=".92"/></svg><div class="bubble">Danke dir für alles. Wir machen ab nächstem Monat intern weiter.</div></div>
+    <p class="punch">Aus dem Nichts.</p>
+  </div>
+  <div class="tile now">
+    <span class="eyebrow">Mit Treue-Turbo · dein Kunde schreibt</span>
+    <div class="row"><svg class="av" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#7D5CFF"/><circle cx="20" cy="15.5" r="6.5" fill="#fff" opacity=".92"/><path d="M7.5 34c1.6-7 6.6-10.5 12.5-10.5S30.9 27 32.5 34A20 20 0 0 1 7.5 34z" fill="#fff" opacity=".92"/></svg><div class="bubble">Kurzer Call morgen? Wir würden dich gern fürs nächste Jahr einplanen.</div></div>
+    <p class="punch"><span class="grad">Ab jetzt die Regel.</span></p>
+  </div>
+</div>
+</section>
+
+<section class="say">
+  <div class="wrap">
+    <h2>Wir finden, was deine Kunden stört <span class="grad">und sorgen dafür, dass sie bleiben.</span></h2>
+    <p class="one-n"><b class="grad">+100 %</b><span>Customer Lifetime Value</span></p>
+  </div>
+</section>
+
+<div class="wrap calcwrap" id="rechner">
+  <div class="tile calc">
+    <div>
+      <h2>Rechne aus, was du liegen lässt.</h2>
+      <div class="field"><label for="kunden">Laufende Kunden <output id="o-kunden"></output></label><input type="range" id="kunden" min="5" max="60" step="1" value="15"></div>
+      <div class="field"><label for="umsatz">Umsatz pro Kunde im Monat <output id="o-umsatz"></output></label><input type="range" id="umsatz" min="500" max="30000" step="500" value="5000"></div>
+      <div class="field"><label for="dauer">So lange bleibt ein Kunde heute <output id="o-dauer"></output></label><input type="range" id="dauer" min="3" max="36" step="1" value="8"></div>
+    </div>
+    <div class="sum">
+      <span class="eyebrow">Mehr Umsatz mit deinen heutigen Kunden</span>
+      <b class="grad" id="r-gesamt"></b>
+      <p>Ohne einen einzigen Neukunden.</p>
+      <button class="btn" data-open>Gespräch vereinbaren</button>
+    </div>
+  </div>
+</div>
+
+<section class="guar">
+  <div class="wrap">
+    <div class="num grad">100 %</div>
+    <h2>Geld-zurück-Garantie, wenn es nicht hält.</h2>
+    <p class="sub">Dein Aufwand: 30 Minuten pro Woche.</p>
+  </div>
+</section>
+
+<div class="wrap endwrap">
+  <div class="tile end">
+    <div class="end-text">
+      <h2>Wie lange bleiben deine Kunden?</h2>
+      <p class="sub">15 Minuten am Telefon. Julius ruft dich an.</p>
+      <button class="btn" data-open>Gespräch vereinbaren</button>
+    </div>
+  </div>
+</div>
+
+<footer><div class="wrap"><span>Treue-Turbo ist ein Angebot der Locadas GmbH</span><span><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="#" id="ck-open">Cookies</a></span></div></footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="dlg">
+    <button class="x" data-close aria-label="Schließen">×</button>
+    <div class="contact">
+      <h3 id="mt">15 Minuten mit Julius</h3>
+      <p>Ganz locker am Telefon. Such dir aus, wie du dich meldest.</p>
+      <a class="btn" href="tel:+4915225701694">Anrufen: 01522 5701694</a>
+      <a class="btn ghost" href="https://www.linkedin.com/in/julius-komorek/" target="_blank" rel="noopener">Nachricht auf LinkedIn</a>
+      <a class="btn ghost" href="mailto:info@locadas.de?subject=Treue-Turbo">E-Mail an info@locadas.de</a>
+    </div>
+  </div>
+</div>
+
+<div class="cookie" id="cookie" hidden role="dialog" aria-labelledby="ck-t">
+  <p class="ck-eyebrow">Deine Daten. Deine Entscheidung.</p>
+  <h3 id="ck-t">Cookies? Du entscheidest.</h3>
+  <p>Notwendige Cookies halten die Seite am Laufen. Mit allen Cookies hilfst du uns, die Seite besser zu machen.</p>
+  <button type="button" class="ck-b" data-ck="all">Alle akzeptieren</button>
+  <button type="button" class="ck-n" data-ck="necessary">Nur notwendige</button>
+  <p class="ck-links"><a href="datenschutz.html">Datenschutz</a><a href="impressum.html">Impressum</a></p>
+</div>
+
+<script>
+(function(){
+  var g=function(id){return document.getElementById(id)};
+  var eur=function(n){return Math.round(n).toLocaleString('de-DE')+' €'};
+  var still=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Rechner */
+  var shown=0,raf;
+  function count(to){
+    if(still){g('r-gesamt').textContent='+ '+eur(to);return}
+    cancelAnimationFrame(raf);var from=shown,t0=performance.now();
+    (function step(t){var p=Math.min(1,(t-t0)/400),v=from+(to-from)*(1-Math.pow(1-p,3));shown=v;g('r-gesamt').textContent='+ '+eur(v);if(p<1)raf=requestAnimationFrame(step)})(t0);
+  }
+  function calc(){
+    var k=+g('kunden').value,u=+g('umsatz').value,d=+g('dauer').value;
+    ['kunden','umsatz','dauer'].forEach(function(id){var el=g(id);el.style.setProperty('--p',((el.value-el.min)/(el.max-el.min)*100)+'%')});
+    g('o-kunden').textContent=k;g('o-umsatz').textContent=eur(u);g('o-dauer').textContent=d+' Monate';
+    count(k*u*d);
+  }
+  ['kunden','umsatz','dauer'].forEach(function(id){g(id).addEventListener('input',calc)});
+  shown=15*5000*8;calc();
+
+  /* Cookie-Hinweis: Auswahl merken. Tracking nur laden, wenn window.ttConsent === 'all'. */
+  var ck=g('cookie'),KEY='tt-consent';
+  function getC(){try{return localStorage.getItem(KEY)}catch(e){return null}}
+  window.ttConsent=getC();
+  if(!window.ttConsent){ck.hidden=false}
+  ck.querySelectorAll('[data-ck]').forEach(function(b){b.addEventListener('click',function(){window.ttConsent=b.dataset.ck;try{localStorage.setItem(KEY,window.ttConsent)}catch(e){}ck.hidden=true;document.dispatchEvent(new CustomEvent('tt-consent',{detail:window.ttConsent}))})});
+  g('ck-open').addEventListener('click',function(e){e.preventDefault();ck.hidden=false});
+
+  /* Termin-Fenster */
+  var m=g('modal');
+  function open(){m.classList.add('open')}
+  function close(){m.classList.remove('open')}
+  /* Calendly-Link hier eintragen. Leer = Termin-Fenster als Ersatz. */
+  var CALENDLY='';
+  document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){if(CALENDLY){location.href=CALENDLY}else{open()}})});
+  document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',close)});
+  m.addEventListener('click',function(e){if(e.target===m)close()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+})();
+</script>
+</body>
+</html>
