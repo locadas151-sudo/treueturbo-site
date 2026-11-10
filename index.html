@@ -400,6 +400,9 @@ footer a:hover{text-decoration:underline}
   .end h2{margin-bottom:18px}
   .endwrap{padding-bottom:72px}
 }
+
+.cal.on{min-height:680px}
+@media (max-width:600px){.cal.on{min-height:640px}}
 </style>
 </head>
 <body>
@@ -528,17 +531,35 @@ footer a:hover{text-decoration:underline}
   ck.querySelectorAll('[data-ck]').forEach(function(b){b.addEventListener('click',function(){window.ttConsent=b.dataset.ck;try{localStorage.setItem(KEY,window.ttConsent)}catch(e){}ck.hidden=true;document.dispatchEvent(new CustomEvent('tt-consent',{detail:window.ttConsent}))})});
   g('ck-open').addEventListener('click',function(e){e.preventDefault();ck.hidden=false});
 
-  /* Kalender am Seitenende. Er wird kurz nach dem Seitenaufruf im Hintergrund vorgeladen,
-     damit er fertig ist, wenn jemand unten ankommt. Wer "Nur notwendige" wählt, bekommt ihn
-     erst nach einem Klick auf einen Termin-Button. Alle Termin-Buttons scrollen dorthin. */
+  /* Kalender am Seitenende. Er wird kurz nach dem Seitenaufruf vorgeladen. Browser rendern
+     fremde iframes außerhalb des Bildschirms nicht fertig. Deshalb liegt er beim Vorladen
+     unsichtbar im sichtbaren Bereich und rutscht an seinen Platz, sobald Calendly fertig ist.
+     Wer "Nur notwendige" wählt, bekommt ihn erst nach einem Klick auf einen Termin-Button. */
   var CALENDLY='https://calendly.com/julius-locadas/julius-komorek';
   var cal=g('cal'),sec=g('termin'),calOn=false,asked=false,ph=cal.innerHTML;
-  function loadCal(){
-    if(calOn)return;calOn=true;
+  function release(){
+    var f=cal.querySelector('iframe');
+    if(!f||!f.dataset.pre)return;
+    delete f.dataset.pre;f.removeAttribute('style');f.removeAttribute('tabindex');
+  }
+  function loadCal(pre){
+    if(calOn){if(!pre)release();return}
+    calOn=true;
     var f=document.createElement('iframe');
     f.src=CALENDLY+'?embed_domain='+encodeURIComponent(location.hostname||'treueturbo.de')+'&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1&primary_color=0071e3';
     f.title='Termin aussuchen';
+    if(pre){
+      f.dataset.pre='1';f.tabIndex=-1;
+      f.style.cssText='position:fixed;left:0;top:0;width:'+Math.max(280,cal.clientWidth)+'px;opacity:0;pointer-events:none;z-index:-1';
+      setTimeout(release,12000);
+    }
     cal.textContent='';cal.appendChild(f);cal.classList.add('on');
+  }
+  window.addEventListener('message',function(e){
+    if(e.origin==='https://calendly.com'&&e.data&&typeof e.data.event==='string'&&e.data.event.indexOf('calendly.')===0){setTimeout(release,600)}
+  });
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){if(es[0].isIntersecting)release()},{rootMargin:'300px'}).observe(sec);
   }
   function unloadCal(){
     calOn=false;cal.classList.remove('on');cal.innerHTML=ph;
@@ -548,10 +569,10 @@ footer a:hover{text-decoration:underline}
   function toCal(){wantCal();sec.scrollIntoView({behavior:still?'auto':'smooth',block:'start'})}
   document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',toCal)});
   g('cal-load').addEventListener('click',wantCal);
-  function preCal(){if(window.ttConsent!=='necessary')loadCal()}
+  function preCal(){if(window.ttConsent!=='necessary')loadCal(true)}
   if(document.readyState==='complete'){setTimeout(preCal,1200)}else{window.addEventListener('load',function(){setTimeout(preCal,1200)})}
   document.addEventListener('tt-consent',function(e){
-    if(e.detail==='necessary'){if(calOn&&!asked)unloadCal()}else{loadCal()}
+    if(e.detail==='necessary'){if(calOn&&!asked)unloadCal()}else{loadCal(true)}
   });
 })();
 </script>
