@@ -350,6 +350,18 @@ footer a:hover{text-decoration:underline}
 .cal iframe{display:block;width:100%;height:680px;border:0;border-radius:18px;background:#fff}
 .cal-note{font-size:13px;color:var(--muted);margin:14px 0 0}
 @media (max-width:600px){.end{padding:44px 12px 20px}.cal iframe{height:640px;border-radius:14px}}
+
+/* Siegel an der +100 % */
+.one-n .one-w{display:inline-block;position:relative;font-style:normal}
+.seal{position:absolute;top:-34px;right:-88px;width:116px;height:116px;border-radius:50%;border:3px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#0A84FF,#7D5CFF 50%,#FF4D8D) border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(12deg);font-style:normal;box-shadow:0 14px 34px -14px rgba(125,92,255,.5)}
+.seal strong{font-size:17px;font-weight:600;letter-spacing:-.02em;color:var(--ink);line-height:1.1}
+.seal small{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.15}
+@media (max-width:600px){
+  .one-n{margin-top:70px}
+  .seal{width:84px;height:84px;top:-58px;right:-30px;border-width:2.5px}
+  .seal strong{font-size:13px}
+  .seal small{display:none}
+}
 </style>
 </head>
 <body>
@@ -395,7 +407,7 @@ footer a:hover{text-decoration:underline}
 <section class="say">
   <div class="wrap">
     <h2>Wir finden, was deine Kunden stört <span class="grad">und sorgen dafür, dass sie bleiben.</span></h2>
-    <p class="one-n"><b class="grad">+100 %</b><span>Customer Lifetime Value</span></p>
+    <p class="one-n"><em class="one-w"><b class="grad">+100 %</b><i class="seal"><strong>Garantiert</strong><small>oder Geld zurück</small></i></em><span>Customer Lifetime Value</span></p>
   </div>
 </section>
 
