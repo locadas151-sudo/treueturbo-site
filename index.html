@@ -490,10 +490,11 @@ footer a:hover{text-decoration:underline}
   ck.querySelectorAll('[data-ck]').forEach(function(b){b.addEventListener('click',function(){window.ttConsent=b.dataset.ck;try{localStorage.setItem(KEY,window.ttConsent)}catch(e){}ck.hidden=true;document.dispatchEvent(new CustomEvent('tt-consent',{detail:window.ttConsent}))})});
   g('ck-open').addEventListener('click',function(e){e.preventDefault();ck.hidden=false});
 
-  /* Kalender am Seitenende. Er wird erst geladen, wenn jemand auf einen Termin-Button klickt
-     oder allen Cookies zugestimmt hat. Alle Termin-Buttons scrollen dorthin. */
+  /* Kalender am Seitenende. Er wird kurz nach dem Seitenaufruf im Hintergrund vorgeladen,
+     damit er fertig ist, wenn jemand unten ankommt. Wer "Nur notwendige" wählt, bekommt ihn
+     erst nach einem Klick auf einen Termin-Button. Alle Termin-Buttons scrollen dorthin. */
   var CALENDLY='https://calendly.com/julius-locadas/julius-komorek';
-  var cal=g('cal'),sec=g('termin'),calOn=false;
+  var cal=g('cal'),sec=g('termin'),calOn=false,asked=false,ph=cal.innerHTML;
   function loadCal(){
     if(calOn)return;calOn=true;
     var f=document.createElement('iframe');
@@ -501,17 +502,19 @@ footer a:hover{text-decoration:underline}
     f.title='Termin aussuchen';
     cal.textContent='';cal.appendChild(f);cal.classList.add('on');
   }
-  function toCal(){loadCal();sec.scrollIntoView({behavior:still?'auto':'smooth',block:'start'})}
-  document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',toCal)});
-  g('cal-load').addEventListener('click',loadCal);
-  function autoCal(){
-    if(calOn||window.ttConsent!=='all')return;
-    if(!('IntersectionObserver' in window)){loadCal();return}
-    var io=new IntersectionObserver(function(es){if(es[0].isIntersecting){io.disconnect();loadCal()}},{rootMargin:'600px'});
-    io.observe(sec);
+  function unloadCal(){
+    calOn=false;cal.classList.remove('on');cal.innerHTML=ph;
+    g('cal-load').addEventListener('click',wantCal);
   }
-  autoCal();
-  document.addEventListener('tt-consent',autoCal);
+  function wantCal(){asked=true;loadCal()}
+  function toCal(){wantCal();sec.scrollIntoView({behavior:still?'auto':'smooth',block:'start'})}
+  document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',toCal)});
+  g('cal-load').addEventListener('click',wantCal);
+  function preCal(){if(window.ttConsent!=='necessary')loadCal()}
+  if(document.readyState==='complete'){setTimeout(preCal,1200)}else{window.addEventListener('load',function(){setTimeout(preCal,1200)})}
+  document.addEventListener('tt-consent',function(e){
+    if(e.detail==='necessary'){if(calOn&&!asked)unloadCal()}else{loadCal()}
+  });
 })();
 </script>
 </body>
